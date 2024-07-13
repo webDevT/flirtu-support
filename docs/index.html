@@ -8,8 +8,7 @@
     <title>Знакомства в Telegram</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.min.css">
 </head>
@@ -39,11 +38,9 @@
             </div>
             
             <div class="buttons-wrapper">
-
-                 <div class="button" id="delete-button">
+                <div class="button" id="delete-button">
                     <a href="">
-                        Delete
-your paragraph text
+                        Delete your paragraph text
                     </a>
                 </div>
 
@@ -52,7 +49,6 @@ your paragraph text
                         Why I am banded
                     </a>
                 </div>
-
             </div>
 
             <div class="button support-button">
@@ -62,10 +58,6 @@ your paragraph text
                     4
                 </div>
                 </a>
-               
-            </div>
-      
-            <div>
             </div>
         </div>   
     </div>
@@ -73,17 +65,31 @@ your paragraph text
     <!-- ---------------start instruction content------------ -->
     <div class="content instruction-content">
         <div class="container">
-          
-            <p>
-                Enter code to confirm deletion
-            </p>
-
+            <p>Enter code to confirm deletion</p>
             <input type="text" class="code-input">
 
-            <div class="button button-confirm">
-                <a href="">
-                    Confirm
-                </a>
+            <div class="captcha-container">
+                <p>Please move the slider to the right to confirm that you are not a robot::</p>
+                <div class="slider-container">
+                    <div class="slider-track" id="slider-track"></div>
+                    <div class="slider-thumb" id="slider-thumb">
+                        <img src="img/tick.svg" alt="">
+                    </div>
+                </div>
+                <p class="slider-instructions">Move the slider to the right</p>
+            </div>
+
+            <div class="buttons-wrapper">
+                <div class="button button-back">
+                    <a href="">
+                        Back
+                    </a>
+                </div>
+                <div class="button button-confirm button-confirm--disabled">
+                    <a href="">
+                        Confirm
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -103,8 +109,8 @@ your paragraph text
     </div>
     <!-- end modal window -->
 
-     <!-- start modal window error-->
-     <!-- <div class="modal-window modal-window--error">
+    <!-- start modal window error-->
+    <!-- <div class="modal-window modal-window--error">
         <div class="modal-window__content">
             <img src="img/error.svg" alt="">
             <p>Incorrect verification code</p>
@@ -116,7 +122,7 @@ your paragraph text
         </div>
     </div> -->
     <!-- end modal window error-->
-    
+
     <script>
         document.getElementById('delete-button').addEventListener('click', function(event) {
             event.preventDefault();
@@ -133,8 +139,7 @@ your paragraph text
         });
     </script>
 
-
-          <script>
+    <script>
         document.querySelector('.button-confirm a').addEventListener('click', function(event) {
             event.preventDefault();
             document.querySelector('.modal-window').style.display = 'block';
@@ -151,9 +156,78 @@ your paragraph text
             document.querySelector('.modal-window').style.display = 'none';
             document.querySelector('.modal-overlay').style.display = 'none';
         });
-    
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const codeInput = document.querySelector('.code-input');
+            const confirmButton = document.querySelector('.button-confirm');
+            const sliderThumb = document.getElementById('slider-thumb');
+            const sliderTrack = document.getElementById('slider-track');
+            const sliderContainer = document.querySelector('.slider-container');
+            const sliderInstructions = document.querySelector('.slider-instructions');
+            let isCaptchaPassed = false;
+            let isDragging = false;
+            let startX = 0;
+            let currentX = 0;
+
+            const checkFormValidity = () => {
+                if (codeInput.value.trim() !== "" && isCaptchaPassed) {
+                    confirmButton.classList.remove('button-confirm--disabled');
+                } else {
+                    confirmButton.classList.add('button-confirm--disabled');
+                }
+            };
+
+            codeInput.addEventListener('input', checkFormValidity);
+
+            const onDragStart = (e) => {
+                isDragging = true;
+                startX = (e.type.includes('touch')) ? e.touches[0].clientX - sliderThumb.offsetLeft : e.clientX - sliderThumb.offsetLeft;
+                document.body.style.userSelect = 'none';
+            };
+
+            const onDragMove = (e) => {
+                if (!isDragging) return;
+                currentX = (e.type.includes('touch')) ? e.touches[0].clientX - startX : e.clientX - startX;
+                if (currentX < 0) {
+                    currentX = 0;
+                } else if (currentX > sliderContainer.offsetWidth - sliderThumb.offsetWidth) {
+                    currentX = sliderContainer.offsetWidth - sliderThumb.offsetWidth;
+                }
+                sliderThumb.style.left = `${currentX}px`;
+            };
+
+            const onDragEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                document.body.style.userSelect = 'auto';
+
+                if (currentX >= sliderContainer.offsetWidth - sliderThumb.offsetWidth) {
+                    sliderInstructions.textContent = 'Verification passed!';
+                    sliderInstructions.style.color = '#328B53';
+                    sliderThumb.style.backgroundColor = '#328B53';
+                    sliderThumb.style.borderColor = '#328B53';
+                    sliderTrack.style.backgroundColor = '#49c778';
+                    sliderThumb.style.pointerEvents = 'none';
+                    isCaptchaPassed = true;
+                    checkFormValidity();
+                } else {
+                    sliderThumb.style.left = '0';
+                    isCaptchaPassed = false;
+                }
+            };
+
+            sliderThumb.addEventListener('mousedown', onDragStart);
+            sliderThumb.addEventListener('touchstart', onDragStart);
+
+            document.addEventListener('mousemove', onDragMove);
+            document.addEventListener('touchmove', onDragMove);
+
+            document.addEventListener('mouseup', onDragEnd);
+            document.addEventListener('touchend', onDragEnd);
+        });
     </script>
 
 </body>
-
 </html>
