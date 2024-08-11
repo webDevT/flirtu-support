@@ -338,6 +338,7 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
 
 
     <script>
+        
 
         function debouncePromise(time) {
             let timerId = undefined;
@@ -420,15 +421,19 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
                                     //return html`<span>${item.title}</span>`
                                     return html`
                                         <div>
+                                            <div class="aa-Item__header">
+                                            <span class="aa-Item__icon">
                                             👉
-                                            <p>
+                                            </span>
+                                            <span>
                                                 <a target="_blank"
                                                    href="${`https://flirtusia.zendesk.com/hc/en-us/articles/${item.id}`}">${components.Highlight({
                                                     hit: item,
                                                     attribute: 'title',
                                                     tagName: 'b',
                                                 })}</a>
-                                            </p>
+                                            </span>
+                                            </div>
                                             ${components.Snippet({
                                                 hit: item,
                                                 attribute: 'body_safe',
@@ -484,6 +489,8 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
         //     // },
         // });
     </script>
+
+   
 
 </body>
 </html>
