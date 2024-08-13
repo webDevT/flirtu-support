@@ -142,6 +142,23 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
     </div> -->
     <!-- end modal window error-->
 
+<!-- start text modal -->
+<div class="text-modal">
+    <div class="text-modal__content">
+        <div class="close-button">
+            <img src="img/close.svg" alt="">
+        </div>
+        
+        <div class="text-modal__title">
+            Some Title 
+        </div>
+        <div class="text-modal__text">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae sint, neque non, nostrum repellat! Natus possimus quisquam quibusdam distinctio voluptates at laboriosam, ea, incidunt animi voluptas explicabo adipisci ex voluptatibus repellendus vero. Deleniti, amet similique! Laboriosam dolorem ducimus veniam alias? Ipsam quo velit temporibus officiis laboriosam. Doloremque at voluptas a, vero doloribus harum esse similique, animi debitis odio laudantium ratione molestiae veritatis exercitationem accusantium explicabo fugit! Temporibus magni, molestiae voluptas iusto dolores eius totam ab? Laborum dolorum voluptatibus doloremque voluptatum ad, vero nisi nobis, consectetur sapiente reiciendis ut esse?
+        </div>
+    </div>
+</div>
+<!-- end text modal -->
+
     <script>
         document.getElementById('delete-button').addEventListener('click', function(event) {
             event.preventDefault();
@@ -248,93 +265,8 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
         });
     </script>
 
-    <!-- start support button script -->
-    <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const button = document.getElementById('draggableButton');
-    let isDragging = false;
-    let offsetX, offsetY;
 
-   // Function to limit the coordinates of the button within the screen
-    function restrictPosition(x, y, button) {
-        const buttonRect = button.getBoundingClientRect();
-        const minX = 0;
-        const minY = 0;
-        const maxX = window.innerWidth - buttonRect.width;
-        const maxY = window.innerHeight - buttonRect.height;
-
-        // Limit the coordinates, taking into account the size of the button
-        return {
-            x: Math.max(minX, Math.min(maxX, x)),
-            y: Math.max(minY, Math.min(maxY, y))
-        };
-    }
-
-// Handle mouse events
-    button.addEventListener('mousedown', function (e) {
-        isDragging = true;
-        offsetX = e.clientX - button.getBoundingClientRect().left;
-        offsetY = e.clientY - button.getBoundingClientRect().top;
-    });
-
-    document.addEventListener('mousemove', function (e) {
-        if (isDragging) {
-            let x = e.clientX - offsetX;
-            let y = e.clientY - offsetY;
-            const restrictedPosition = restrictPosition(x, y, button);
-            button.style.left = `${restrictedPosition.x}px`;
-            button.style.top = `${restrictedPosition.y}px`;
-        }
-    });
-
-    document.addEventListener('mouseup', function () {
-        isDragging = false;
-    });
-
-// Processing steps for touch screens
-    button.addEventListener('touchstart', function (e) {
-        isDragging = true;
-        const touch = e.touches[0];
-        offsetX = touch.clientX - button.getBoundingClientRect().left;
-        offsetY = touch.clientY - button.getBoundingClientRect().top;
-    });
-
-    document.addEventListener('touchmove', function (e) {
-        if (isDragging) {
-            const touch = e.touches[0];
-            let x = touch.clientX - offsetX;
-            let y = touch.clientY - offsetY;
-            const restrictedPosition = restrictPosition(x, y, button);
-            button.style.left = `${restrictedPosition.x}px`;
-            button.style.top = `${restrictedPosition.y}px`;
-        }
-    });
-
-    document.addEventListener('touchend', function () {
-        isDragging = false;
-    });
-
-   // Process to change the screen size
-    window.addEventListener('resize', function () {
-        const buttonRect = button.getBoundingClientRect();
-        const maxX = window.innerWidth - buttonRect.width;
-        const maxY = window.innerHeight - buttonRect.height;
-        const currentX = parseInt(button.style.left, 10);
-        const currentY = parseInt(button.style.top, 10);
-
-        // Check and correct the position of the button after changing the screen size
-        if (currentX > maxX) {
-            button.style.left = `${maxX}px`;
-        }
-        if (currentY > maxY) {
-            button.style.top = `${maxY}px`;
-        }
-    });
-});
-
-
-    </script>
-    <!-- end support button script -->
+   
 
 
     <script>
@@ -426,12 +358,12 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
                                             👉
                                             </span>
                                             <span>
-                                                <a target="_blank"
+                                                <div class="aa-Item-title"
                                                    href="${`https://flirtusia.zendesk.com/hc/en-us/articles/${item.id}`}">${components.Highlight({
                                                     hit: item,
                                                     attribute: 'title',
                                                     tagName: 'b',
-                                                })}</a>
+                                                })}</div>
                                             </span>
                                             </div>
                                             ${components.Snippet({
@@ -491,6 +423,33 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
     </script>
 
    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.querySelector('.text-modal');
+    const closeButton = modal.querySelector('.close-button');
+    function openModal() {
+        modal.style.display = 'flex';
+    }
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('aa-Item-title')) {
+            openModal();
+        }
+    });
 
+    closeButton.addEventListener('click', closeModal);
+
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+});
+
+
+
+</script>
 </body>
 </html>
