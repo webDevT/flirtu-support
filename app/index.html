@@ -71,7 +71,7 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
                 </div>
             </div>
 
-            <div class="button support-button" id="draggableButton">
+            <div class="button support-button">
                 <div>
                     <img src="img/support-icon.svg" alt="">
                    <div class="support-button__counter">
@@ -153,7 +153,32 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
             Some Title 
         </div>
         <div class="text-modal__text">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae sint, neque non, nostrum repellat! Natus possimus quisquam quibusdam distinctio voluptates at laboriosam, ea, incidunt animi voluptas explicabo adipisci ex voluptatibus repellendus vero. Deleniti, amet similique! Laboriosam dolorem ducimus veniam alias? Ipsam quo velit temporibus officiis laboriosam. Doloremque at voluptas a, vero doloribus harum esse similique, animi debitis odio laudantium ratione molestiae veritatis exercitationem accusantium explicabo fugit! Temporibus magni, molestiae voluptas iusto dolores eius totam ab? Laborum dolorum voluptatibus doloremque voluptatum ad, vero nisi nobis, consectetur sapiente reiciendis ut esse?
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae sint, neque non, nostrum repellat! Natus possimus quisquam quibusdam distinctio voluptates at laboriosam, ea, incidunt animi voluptas explicabo adipisci ex voluptatibus repellendus vero.
+            </p>
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae.
+            </p>
+
+            <p>
+                Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae.
+            </p>
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae sint, neque non, nostrum repellat! Natus possimus quisquam quibusdam distinctio voluptates at laboriosam, ea, incidunt animi voluptas explicabo adipisci ex voluptatibus repellendus vero.
+            </p>
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae.
+            </p>
+
+            <p>
+                Nisi, nam rerum omnis itaque vero expedita impedit adipisci obcaecati dolores repudiandae.
+            </p>
+
+            
         </div>
     </div>
 </div>
@@ -352,7 +377,7 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
                                 item({item, components, html}) {
                                     //return html`<span>${item.title}</span>`
                                     return html`
-                                        <div>
+                                        <div class="aa-Item-content">
                                             <div class="aa-Item__header">
                                             <span class="aa-Item__icon">
                                             👉
@@ -434,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'none';
     }
     document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('aa-Item-title')) {
+        if (event.target.classList.contains('aa-Item-content')) {
             openModal();
         }
     });
