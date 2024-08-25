@@ -184,293 +184,380 @@ const searchClient = algoliasearch('T1E6JG8I3R', 'e00f97132821ce1128501a8aa542ec
 </div>
 <!-- end text modal -->
 
-    <script>
-        document.getElementById('delete-button').addEventListener('click', function(event) {
-            event.preventDefault();
-            
-            var supportContent = document.querySelector('.support-content');
-            if (supportContent) {
-                supportContent.remove();
-            }
-
-            var instructionContent = document.querySelector('.instruction-content');
-            if (instructionContent) {
-                instructionContent.style.display = 'block';
-            }
-        });
-    </script>
-
-    <script>
-        document.querySelector('.button-confirm a').addEventListener('click', function(event) {
-            event.preventDefault();
-            document.querySelector('.modal-window').style.display = 'block';
-            document.querySelector('.modal-overlay').style.display = 'block';
-        });
-
-        document.querySelector('.close-modal a').addEventListener('click', function(event) {
-            event.preventDefault();
-            document.querySelector('.modal-window').style.display = 'none';
-            document.querySelector('.modal-overlay').style.display = 'none';
-        });
-
-        document.querySelector('.modal-overlay').addEventListener('click', function() {
-            document.querySelector('.modal-window').style.display = 'none';
-            document.querySelector('.modal-overlay').style.display = 'none';
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const codeInput = document.querySelector('.code-input');
-            const confirmButton = document.querySelector('.button-confirm');
-            const sliderThumb = document.getElementById('slider-thumb');
-            const sliderTrack = document.getElementById('slider-track');
-            const sliderContainer = document.querySelector('.slider-container');
-            const sliderInstructions = document.querySelector('.slider-instructions');
-            let isCaptchaPassed = false;
-            let isDragging = false;
-            let startX = 0;
-            let currentX = 0;
-
-            const checkFormValidity = () => {
-                if (codeInput.value.trim() !== "" && isCaptchaPassed) {
-                    confirmButton.classList.remove('button-confirm--disabled');
-                } else {
-                    confirmButton.classList.add('button-confirm--disabled');
-                }
-            };
-
-            codeInput.addEventListener('input', checkFormValidity);
-
-            const onDragStart = (e) => {
-                isDragging = true;
-                startX = (e.type.includes('touch')) ? e.touches[0].clientX - sliderThumb.offsetLeft : e.clientX - sliderThumb.offsetLeft;
-                document.body.style.userSelect = 'none';
-            };
-
-            const onDragMove = (e) => {
-                if (!isDragging) return;
-                currentX = (e.type.includes('touch')) ? e.touches[0].clientX - startX : e.clientX - startX;
-                if (currentX < 0) {
-                    currentX = 0;
-                } else if (currentX > sliderContainer.offsetWidth - sliderThumb.offsetWidth) {
-                    currentX = sliderContainer.offsetWidth - sliderThumb.offsetWidth;
-                }
-                sliderThumb.style.left = `${currentX}px`;
-            };
-
-            const onDragEnd = () => {
-                if (!isDragging) return;
-                isDragging = false;
-                document.body.style.userSelect = 'auto';
-
-                if (currentX >= sliderContainer.offsetWidth - sliderThumb.offsetWidth) {
-                    sliderInstructions.textContent = 'Verification passed!';
-                    sliderInstructions.style.color = '#328B53';
-                    sliderThumb.style.backgroundColor = '#328B53';
-                    sliderThumb.style.borderColor = '#328B53';
-                    sliderTrack.style.backgroundColor = '#49c778';
-                    sliderThumb.style.pointerEvents = 'none';
-                    isCaptchaPassed = true;
-                    checkFormValidity();
-                } else {
-                    sliderThumb.style.left = '0';
-                    isCaptchaPassed = false;
-                }
-            };
-
-            sliderThumb.addEventListener('mousedown', onDragStart);
-            sliderThumb.addEventListener('touchstart', onDragStart);
-
-            document.addEventListener('mousemove', onDragMove);
-            document.addEventListener('touchmove', onDragMove);
-
-            document.addEventListener('mouseup', onDragEnd);
-            document.addEventListener('touchend', onDragEnd);
-        });
-    </script>
-
-
-   
-
-
-    <script>
-        
-
-        function debouncePromise(time) {
-            let timerId = undefined;
-    
-            return function debounced(items) {
-                if (timerId) {
-                    clearTimeout(timerId);
-                }
-    
-                return new Promise((resolve) => {
-                    console.log(timerId)
-                    timerId = setTimeout(() => resolve(items), time);
-                });
-            };
-        }
-    
-        const debounced = debouncePromise(1000);
-    
-        // const search = instantsearch({
-        //     indexName: 'Flirtu Index',
-        //     searchClient,
-        // });
-    
-        const querySuggestionsPlugin = createQuerySuggestionsPlugin({
-            searchClient,
-            indexName: 'Flirtu Index_query_suggestions',
-            getSearchParams() {
-                return {
-                    hitsPerPage: 10,
-                };
-            },
-    
-        });
-    
-        autocomplete({
-            container: '#autocomplete',
-            placeholder: 'Search for Flirtu guidelines',
-            getSources() {
-                return debounced(
-                    [
-                        {
-                            sourceId: 'foo',
-                            getItemInputValue: ({item}) => {
-                                return `foo`
-                            },
-                            getItems({query}) {
-                                return getAlgoliaResults({
-                                    searchClient,
-                                    queries: [
-                                        {
-                                            indexName: 'Flirtu Index',
-                                            query,
-                                            params: {
-                                                hitsPerPage: 4,
-                                                attributesToSnippet: [
-                                                    'body_safe:10',
-                                                    'title'
-                                                ],
-                                                filters: 'section.id:19909491154077'
-                                            },
-                                        },
-                                    ],
-                                });
-                            },
-                            getItemUrl({item}) {
-                                return `https://flirtusia.zendesk.com/hc/en-us/articles/${item.id}`;
-                            },
-                            templates: {
-                                noResults({html}) {
-                                    return html`No results. contact foo
-                                    <button onClick="${() => {
-                                        alert(1)
-                                    }}">ads
-                                    </button>`;
-                                },
-                                header() {
-                                    return 'Suggestions👇';
-                                },
-                                item({item, components, html}) {
-                                    //return html`<span>${item.title}</span>`
-                                    return html`
-                                        <div class="aa-Item-content">
-                                            <div class="aa-Item__header">
-                                            <span class="aa-Item__icon">
-                                            👉
-                                            </span>
-                                            <span>
-                                                <div class="aa-Item-title"
-                                                   href="${`https://flirtusia.zendesk.com/hc/en-us/articles/${item.id}`}">${components.Highlight({
-                                                    hit: item,
-                                                    attribute: 'title',
-                                                    tagName: 'b',
-                                                })}</div>
-                                            </span>
-                                            </div>
-                                            ${components.Snippet({
-                                                hit: item,
-                                                attribute: 'body_safe',
-                                            })}
-    
-                                        </div>`;
-                                    return components.ReverseHighlight({hit: item.title, attribute: 'query'});
-                                },
-                            },
-                            onSelect: function (event) {
-                                event.setQuery(null);
-                                // event.setQuery(event.item.title);
-                            }
-                        },
-                    ]
-                );
-            },
-        });
-    
-        // autocomplete({
-        //     container: '#autocomplete',
-        //     placeholder: 'Search for ...',
-        //     plugins: [querySuggestionsPlugin],
-        //     autoFocus: true,
-        //     getSources() {
-        //         return [
-        //             {
-        //                 sourceId: 'articles',
-        //                 getItems({query}) {
-        //                     return getAlgoliaResults({
-        //                         searchClient,
-        //                         queries: [
-        //                             {
-        //                                 indexName: 'Flirtu Index',
-        //                                 query,
-        //                             },
-        //                         ],
-        //                     });
-        //                 },
-        //                 getItemUrl({item}) {
-        //                     return item.url;
-        //                 },
-        //                 templates: {
-        //                     item({item}) {
-        //                         return item.title;
-        //                     },
-        //                 },
-        //             },
-        //         ];
-        //     },
-        //     // getSources() {
-        //     //     return [];
-        //     // },
-        // });
-    </script>
-
-   
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=a3760307-635b-4774-9cf9-11ec359dc140"> </script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.querySelector('.text-modal');
-    const closeButton = modal.querySelector('.close-button');
-    function openModal() {
-        modal.style.display = 'flex';
+    let unread_counter_timer = null;
+
+    async function update_unread_counter(count) {
+        data = new FormData();
+        data.append('action', 'unread_counter');
+        data.append('counter', count);
+        await fetch('/customer-support/?tgWebAppStartParam=207655919-692dae97d661bda0548e0d409f4fabe4', {
+            method: 'POST',
+            body: data
+        })
     }
-    function closeModal() {
-        modal.style.display = 'none';
+
+    zE("messenger", "loginUser", function (callback) {
+        callback("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImFwcF82NjdmNGQ1ZmE0NzQ1ZjA5MDNiZGE1MWMifQ.eyJzY29wZSI6InVzZXIiLCJleHRlcm5hbF9pZCI6IjIwNzY1NTkxOSIsIm5hbWUiOiJBTEVYIn0.pMoey4FCdtS2qCxKHnw5azQuBuFJhujZfWnN5TAlRWM")
+    });
+
+    zE("messenger:on", "unreadMessages", async function (count) {
+        if (unread_counter_timer) {
+            clearTimeout(unread_counter_timer)
+        }
+        if (count) {
+            document.getElementById('unread-counter').style = '';
+            document.getElementById('unread-counter').textContent = count;
+        } else {
+            document.getElementById('unread-counter').style = 'display: none;';
+        }
+        unread_counter_timer = setTimeout(update_unread_counter.bind(null, count), 500)
+
+    })
+
+    async function delete_profile(event) {
+        if (!isCaptchaPassed) return;
+        event = event || window.event;
+
+        event.preventDefault();
+        // let verification_code = document.getElementById('verification_code').value;
+
+        // if (!verification_code) {
+        //     data = new FormData();
+        //     data.append('action', 'delete');
+        //     await fetch('/customer-support/?tgWebAppStartParam=207655919-692dae97d661bda0548e0d409f4fabe4', {
+        //         method: 'POST',
+        //         body: data
+        //     })
+        //         .then(async response => {
+        //                 switch (response.status) {
+        //                     case 405:
+        //                         alert('bot is blocked, unblock to get the code');
+        //                         break;
+        //                     case 200:
+        //                         alert('full code and submit');
+        //                         break;
+        //                 }
+        //             }
+        //         )
+        // } else {
+        data = new FormData();
+        data.append('action', 'delete');
+        // data.append('code', verification_code);
+        await fetch('/customer-support/?tgWebAppStartParam=207655919-692dae97d661bda0548e0d409f4fabe4', {
+            method: 'POST',
+            body: data
+        })
+            .then(async response => {
+                switch (response.status) {
+                    // case 405:
+                    //     alert('wrong code');
+                    //     break;
+                    case 200:
+                        success_modal('hopa hopa');
+                        break;
+                }
+            })
+        // }
     }
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('aa-Item-content')) {
-            openModal();
+
+</script>
+<script>
+    window.Telegram.WebApp.ready();
+</script>
+<script>
+    function success_modal(text) {
+        document.querySelector('.modal-window p').innerHTML = text;
+        document.querySelector('.modal-window').style.display = 'block';
+    }
+    function close_modal(reload) {
+        if (reload) {
+            location.href = '/customer-support/?tgWebAppStartParam=207655919-692dae97d661bda0548e0d409f4fabe4';
+            return;
+        }
+        document.querySelector('.modal-window').style.display = 'none';
+    }
+    document.getElementById('delete-button').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        var supportContent = document.querySelector('.support-content');
+        if (supportContent) {
+            supportContent.style.display = 'none';
+        }
+
+        var instructionContent = document.querySelector('.instruction-content');
+        if (instructionContent) {
+            instructionContent.style.display = 'block';
         }
     });
+
+    document.querySelector('.instruction-content .button-back').addEventListener('click', function(event) {
+        location.href = '/customer-support/?tgWebAppStartParam=207655919-692dae97d661bda0548e0d409f4fabe4';
+    });
+</script>
+
+
+<script>
+    const confirmButton = document.querySelector('.button-confirm');
+    const sliderThumb = document.getElementById('slider-thumb');
+    const sliderTrack = document.getElementById('slider-track');
+    const sliderContainer = document.querySelector('.slider-container');
+    const sliderInstructions = document.querySelector('.slider-instructions');
+    let isCaptchaPassed = false;
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+    document.addEventListener('DOMContentLoaded', () => {
+        // const codeInput = document.querySelector('.code-input');
+
+        console.log('loaded')
+        // console.log(codeInput)
+
+        const checkFormValidity = () => {
+            //codeInput.value.trim() !== "" &&
+            if (isCaptchaPassed) {
+                confirmButton.classList.remove('button-confirm--disabled');
+                document.getElementById('slider-thumb-tick').style.display = '';
+            } else {
+                confirmButton.classList.add('button-confirm--disabled');
+            }
+        };
+
+        // codeInput.addEventListener('input', checkFormValidity);
+        // console.log(codeInput)
+
+        const onDragStart = (e) => {
+            isDragging = true;
+            startX = (e.type.includes('touch')) ? e.touches[0].clientX - sliderThumb.offsetLeft : e.clientX - sliderThumb.offsetLeft;
+            document.body.style.userSelect = 'none';
+        };
+
+        function isPointerInside(event, elem) {
+            const rect = elem.getBoundingClientRect();
+            const x = event.type.includes('touch') ? event.touches[0].clientX : event.clientX;
+            const y = event.type.includes('touch') ? event.touches[0].clientY : event.clientY;
+
+            return (
+                x >= rect.left &&
+                x <= rect.right &&
+                y >= rect.top &&
+                y <= rect.bottom
+            );
+        }
+
+        const onDragMove = (e) => {
+            if (!isDragging) return;
+            // console.log(isPointerInside(e, sliderTrack))
+            // if (!isPointerInside(e, sliderTrack)) {
+            //     isDragging = false;
+            //     sliderThumb.style.left = `0px`;
+            // }
+            currentX = (e.type.includes('touch')) ? e.touches[0].clientX - startX : e.clientX - startX;
+            if (currentX < 0) {
+                currentX = 0;
+            } else if (currentX > sliderContainer.offsetWidth - sliderThumb.offsetWidth) {
+                currentX = sliderContainer.offsetWidth - sliderThumb.offsetWidth;
+            }
+            sliderThumb.style.left = `${currentX}px`;
+        };
+
+        const onDragEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            document.body.style.userSelect = 'auto';
+
+            if (currentX >= sliderContainer.offsetWidth - sliderThumb.offsetWidth) {
+                sliderInstructions.textContent = 'Verification passed!';
+                sliderInstructions.style.color = '#328B53';
+                sliderThumb.style.backgroundColor = '#328B53';
+                sliderThumb.style.borderColor = '#328B53';
+                sliderTrack.style.backgroundColor = '#49c778';
+                sliderThumb.style.pointerEvents = 'none';
+                isCaptchaPassed = true;
+                checkFormValidity();
+            } else {
+                sliderThumb.style.left = '0';
+                isCaptchaPassed = false;
+            }
+        };
+
+        sliderThumb.addEventListener('mousedown', onDragStart);
+        sliderThumb.addEventListener('touchstart', onDragStart);
+
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('touchmove', onDragMove);
+
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+    });
+</script>
+
+<script>
+
+
+    function debouncePromise(time) {
+        let timerId = undefined;
+
+        return function debounced(items) {
+            if (timerId) {
+                clearTimeout(timerId);
+            }
+
+            return new Promise((resolve) => {
+                console.log(timerId)
+                timerId = setTimeout(() => resolve(items), time);
+            });
+        };
+    }
+
+    const debounced = debouncePromise(1000);
+
+    // const search = instantsearch({
+    //     indexName: 'Flirtu Index',
+    //     searchClient,
+    // });
+
+    const querySuggestionsPlugin = createQuerySuggestionsPlugin({
+        searchClient,
+        indexName: 'Flirtu Index_query_suggestions',
+        getSearchParams() {
+            return {
+                hitsPerPage: 10,
+            };
+        },
+
+    });
+
+    qq=autocomplete({
+        container: '#autocomplete',
+        placeholder: 'Search for Flirtu guidelines',
+        detachedMediaQuery: '', // Ensures the overlay is always detached
+openOnFocus: true, // Opens the autocomplete on focus
+        getSources({query}) {
+            if (!query.trim()) {
+                // Prevent sending a request if the query is empty or only spaces
+                return [];
+            }
+            return debounced(
+                [
+                    {
+                        sourceId: 'foo',
+                        // getItemInputValue: ({item}) => {
+                        //     return `foo`
+                        // },
+                        getItems({query}) {
+
+                            return getAlgoliaResults({
+                                searchClient,
+                                queries: [
+                                    {
+                                        indexName: 'Flirtu Index',
+                                        query,
+                                        params: {
+                                            hitsPerPage: 4,
+                                            attributesToSnippet: [
+                                                'body_safe:10',
+                                                'title'
+                                            ],
+                                            filters: 'section.id:19909491154077'
+                                        },
+                                    },
+                                ],
+                            });
+                        },
+                        getItemUrl({item}) {
+                            return `https://flirtusia.zendesk.com/hc/en-us/articles/${item.id}`;
+                        },
+                        templates: {
+                            noResults({html}) {
+                                return html`No results. contact foo
+                                <button onClick="${() => {
+                                    alert(1)
+                                }}">ads
+                                </button>`;
+                            },
+                            header() {
+                                return 'Suggestions👇';
+                            },
+                            item({item, components, html}) {
+                                //return html`<span>${item.title}</span>`
+                                return html`
+                                    <div class="aa-Item-content">
+                                        <div class="aa-Item__header">
+                                        <span class="aa-Item__icon">
+                                        👉
+                                        </span>
+                                        <span>
+                                            <div class="aa-Item-content"
+                                               href="${`https://flirtusia.zendesk.com/hc/en-us/articles/${item.id}`}">${components.Highlight({
+                                                hit: item,
+                                                attribute: 'title',
+                                                tagName: 'b',
+                                            })}</div>
+                                        </span>
+                                        </div>
+                                        ${components.Snippet({
+                                            hit: item,
+                                            attribute: 'body_safe',
+                                        })}
+
+                                    </div>`;
+                                return components.ReverseHighlight({hit: item.title, attribute: 'query'});
+                            },
+                        },
+                        onSelect: function (q,w,e) {
+                            console.log(q,w,e )
+                            // searchInput.value = item.name; // Example: Fill the input with the selected item's name
+      // qq.update({ query: item.name, sources: state.sources }); // Refresh autocomplete with the current results
+
+      // Keep the overlay open
+      q.setIsOpen(true);
+                            // event.preventDefault();
+                            // event.stopImmediatePropagation();
+                            openModal();
+                            // Handle the selected item
+                            // event.setQuery('mes');
+                            // event.setIsOpen(true);
+                            // event.setQuery(event.item.title);
+                        }
+                    },
+                ]
+            );
+        },
+    });
+</script>
+<script>
+let modal, closeButton;
+function openModal() {
+        modal.style.display = 'flex';
+    }
+
+document.addEventListener('DOMContentLoaded', function () {
+    modal = document.querySelector('.text-modal');
+    closeButton = modal.querySelector('.close-button');
+
+
+
+    function closeModal(event) {
+        qq.setIsOpen(true)
+        modal.style.display = 'none';
+    }
+
+    // document.addEventListener('click', function (event) {
+    //     if (event.target.classList.contains('aa-Item-content')) {
+    //         openModal();
+    //     }
+    // });
 
     closeButton.addEventListener('click', closeModal);
 
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
+    // window.addEventListener('click', function (event) {
+    //     if (event.target === modal) {
+    //         closeModal();
+    //     }
+    // });
 });
 
 
